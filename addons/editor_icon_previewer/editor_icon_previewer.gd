@@ -44,21 +44,24 @@ func _on_update_requested():
 func _populate_icons():
 	icon_window.clear()
 
-	var godot_theme = get_editor_interface().get_base_control().theme
-
-	var list = Array(godot_theme.get_icon_list('EditorIcons'))
-	list.sort() # alphabetically
+	var godot_theme = get_editor_interface().get_editor_theme()
 
 	var no_name = []
 
-	for icon_name in list:
-		var icon_tex = godot_theme.get_icon(icon_name, 'EditorIcons')
+	for icon_type in EditorInterface.get_editor_theme().get_icon_type_list():
+		var list = Array(godot_theme.get_icon_list(icon_type))
+		list.sort() # alphabetically
 
-		if icon_name.is_empty():
-			no_name.append(icon_tex)
-			continue
+		for icon_name in list:
+			var icon_tex = godot_theme.get_icon(icon_name, icon_type)
 
-		icon_window.add_icon(icon_tex, icon_name)
+			if icon_name.is_empty():
+				no_name.append(icon_tex)
+				continue
+
+			var full_name = icon_type + ":" + icon_name
+			icon_window.add_icon(icon_tex, full_name)
+
 
 	if not suppress_warnings:
 		if no_name.size() > 0:
